@@ -21,32 +21,18 @@
 	 //ratio of Mod of slatter determianant of up spins
 	 for(int i=0;i<N;i++){
 			if(i!=change_u){
-			 temp1*=(4*pow(sin(2*PI*0.5*(1.0/(2*N-1))*(B_u[change_u]-B_u[i])),2))/(4*pow(sin(2*PI*0.5*(1.0/(2*N-1))*(A_u[change_u]-A_u[i])),2));
+			 temp1*=(pow(sin(PI*(1.0/(2*N-1))*(B_u[change_u]-B_u[i])),2))/(pow(sin(PI*(1.0/(2*N-1))*(A_u[change_u]-A_u[i])),2));
 			 //printf("%d",A_u[change_u]-A_u[i]);
 			}
 		}
-	printf("\ntemp1=%Le\n",temp1);
-/*	
-	 for(int i=0;i<N;i++){
-			if(i!=change_u)
-			 temp2*=(4*sin(2*PI*0.5*(1.0/(2*N-1))*(B_u[change_u]-B_u[i]))*sin(2*PI*0.5*(B_u[change_u]-B_u[i])));
-			 
-		}
-*/	
 	 
 	 //ratio of Mod of slatter determinant of down spins
 	 for(int i=0;i<N;i++){
 			if(i!=change_d)
-			 temp2*=(4*pow(sin(2*PI*0.5*(1.0/(2*N-1))*(B_d[change_d]-B_d[i])),2))/(4*pow(sin(2*PI*0.5*(1.0/(2*N-1))*(A_d[change_d]-A_d[i])),2));
+			 temp2*=(pow(sin(PI*(1.0/(2*N-1))*(B_d[change_d]-B_d[i])),2))/(pow(sin(PI*(1.0/(2*N-1))*(A_d[change_d]-A_d[i])),2));
 			 
 		}
-	/*	
-	 for(int i=0;i<N;i++){
-			if(i!=change_d)
-			 temp2*=(4*sin(2*PI*0.5*(1.0/(2*N-1))*(B_d[change_d]-B_d[i]))*sin(2*PI*0.5*(B_d[change_d]-B_d[i])));
-			 
-		}
-	*/
+	//printf("\np=%Le\n",temp1*temp2);
 	return temp1*temp2;  
 	 
  }
