@@ -27,12 +27,12 @@ double spin_correlation(int N,int A_u[N],int A_d[N]){
 		arr[j]=-1;
 		
 	}
-	printf("\n");
+/*	printf("\n");
 	for(int i=0;i<2*N;i++){
 		printf("%d",arr[i]);
 	}
 	printf("\n");
-	//Sz spin correlation:<s^z_i.s^z_i+1>
+*/	//Sz spin correlation:<s^z_i.s^z_i+1>
 		
 		
 	double sum=0;
@@ -50,12 +50,16 @@ double spin_correlation(int N,int A_u[N],int A_d[N]){
 void hubbard_1d_montecarlo(int N_2, int MC){
 	int N=N_2/2;
 	 int MC_t=1;
+	 int accept=0;
 	double spin_corr;
 	double sum_spin_corr=0;
 	double spin_co[MC];
+	double std_dev;
+		printf("\ntakes a while,dont abort::\n");
+	printf("\nchain size=%d,MC step=%d\n",N_2,MC);
 	FILE *file1;
-	file1=fopen("spin_corr_vs_MC_step.txt","w");
 	
+	file1=fopen("spin_corr_vs_MC_step.txt","w");
 	//configuraion A-->B,u:up spins d:down spins
 	int A_u[N] , B_u[N] , A_d[N] , B_d[N];
 	
@@ -64,7 +68,6 @@ void hubbard_1d_montecarlo(int N_2, int MC){
 			//up spins
 			A_u[i]=i;
 	}
-	printf("\n");
 	for(int i=0;i<N;i++){
 			//down spins
 			A_d[i]=(i+N);
@@ -73,7 +76,7 @@ void hubbard_1d_montecarlo(int N_2, int MC){
 	spin_corr=spin_correlation(N,A_u,A_d)/4;
 	spin_co[0]=spin_corr/N_2;
 	sum_spin_corr+=spin_corr;
-	fprintf(file1,"%d	%lf\n",MC_t,sum_spin_corr/MC_t);
+	fprintf(file1,"%d	%lf\n",MC_t,sum_spin_corr/(MC_t*N_2));
 	
 	while(MC_t<=MC){
 	//MC step
@@ -117,38 +120,42 @@ void hubbard_1d_montecarlo(int N_2, int MC){
 				spin_corr=spin_correlation(N,B_u,B_d)/4.0;
 				spin_co[MC_t]=spin_corr/N_2;
 				//test print
-				printf("\nsum=%lf",spin_corr*4.0);
+				//printf("\nsum=%lf",spin_corr*4.0);
 				sum_spin_corr+=spin_corr;
-				fprintf(file1,"%d	%lf\n",MC_t,sum_spin_corr/MC_t);
+				fprintf(file1,"%d	%lf\n",MC_t,sum_spin_corr/(MC_t*N_2));
 				
 				for(int i=0;i<N;i++){
 					//update
 					A_u[i]=B_u[i];
 					A_d[i]=B_d[i];
 				}
-
+				accept++;		
 			}
 			else{
 				//reject the new configuration ;calculate with old one
-				printf("\nsum=%lf",spin_corr*4.0);
+				//printf("\nsum=%lf",spin_corr*4.0);
 				sum_spin_corr+=spin_corr;
 				spin_co[MC_t]=spin_corr/N_2;
 				fprintf(file1,"%d	%lf\n",MC_t,sum_spin_corr/(N_2*MC_t));
 				 
 			}
+				//std deviation
+					
+
 	
 		MC_t++;
 	}
-	
+	printf("\ntakes a while,dont abort::\n");
+	printf("\nchain size=%d,MC step=%d\n",N_2,MC);
 	printf("\nspin_corr/site=%lf\n",sum_spin_corr/(N_2*MC));
+	std_dev=0;
+						for( int i=0;i<MC;i++){
+								std_dev+=pow((spin_co[i]-(sum_spin_corr/(N_2*MC))),2);
+							}
+							std_dev=pow(std_dev/MC,0.5);
 	
-	//std deviation
-	double std_dev=0;
-	for( int i=0;i<MC;i++){
-		std_dev+=pow((spin_co[i]-(sum_spin_corr/(N_2*MC))),2);
-	}
-	std_dev=pow(std_dev/MC,0.5);
 	printf("std Dev:=%lf",std_dev);
-	
+	printf("\naccept=%d\n",accept);
+	fclose(file1);
 }
 
